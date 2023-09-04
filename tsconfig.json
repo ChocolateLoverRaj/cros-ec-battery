@@ -3,10 +3,19 @@
     "strictNullChecks": true,
     "strictBindCallApply": true,
     "allowSyntheticDefaultImports": true,
-    "target": "ES2022",
-    "outDir": "./dist"
+    "target": "ESNext",
+    "outDir": "./dist",
+    "esModuleInterop": true,
+    "moduleResolution": "NodeNext",
+    "module": "NodeNext",
+    "jsx": "preserve"
   },
   "include": [
-    "./index.ts"
-  ]
+    "./src"
+  ],
+  "ts-node": {
+    "compilerOptions": {
+      "module": "CommonJS"
+    }
+  }
 }

@@ -1,0 +1,21 @@
+{
+  "root": true,
+  "ignorePatterns": [
+    "dist"
+  ],
+  "overrides": [
+    {
+      "files": [
+        "*.js",
+        "*.jsx",
+        "*.ts",
+        "*.tsx"
+      ],
+      "extends": [
+        "standard",
+        "standard-jsx",
+        "standard-with-typescript"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+[Unit]
+Description=Enable battery health saver service and web server
+
+[Service]
+Type=simple
+RemainAfterExit=yes
+ExecStart=/opt/cros-ec-battery-health-saver-x64
+
+[Install]
+WantedBy=multi-user.target
