@@ -9,12 +9,12 @@ const port = 9897
 
 const compiler = webpack(webpackConfig)
 
-if (process.env.NODE_ENV === 'development') {
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(join(__dirname, './browser')))
+} else {
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   app.use(webpackDevServer(compiler))
   app.use(webpackHotMiddleware(compiler))
-} else {
-  app.use(express.static(join(__dirname, './browser')))
 }
 
 app.get('/api', (req, res) => {
