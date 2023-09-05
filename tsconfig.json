@@ -13,6 +13,12 @@
   "include": [
     "./src"
   ],
+  "exclude": [
+    "./src/browser"
+  ],
+  "files": [
+    "./src/browser/webpack.config.ts"
+  ],
   "ts-node": {
     "compilerOptions": {
       "module": "CommonJS"
