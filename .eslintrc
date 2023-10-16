@@ -17,5 +17,8 @@
         "standard-with-typescript"
       ]
     }
-  ]
+  ],
+  "parserOptions": {
+    "project": "./eslint-tsconfig.json"
+  }
 }

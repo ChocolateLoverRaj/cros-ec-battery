@@ -4,6 +4,9 @@ import webpack from 'webpack'
 import webpackHotMiddleware from 'webpack-hot-middleware'
 import webpackConfig from './browser/webpack.config'
 import { join } from 'path'
+import { WebSocketServer } from 'ws'
+import { createServer } from 'http'
+
 const app = express()
 const port = 9897
 
@@ -21,6 +24,26 @@ app.get('/api', (req, res) => {
   res.send('Hello from Chromebook EC Battery Health Saver Server!')
 })
 
-app.listen(port, () => {
+const server = createServer(app)
+
+const wss = new WebSocketServer({ server })
+
+wss.on('connection', ws => {
+  console.log('connect')
+
+  ws.on('error', error => {
+    console.error(error)
+  })
+
+  ws.on('message', message => {
+    console.log(message)
+  })
+
+  ws.on('close', () => {
+    console.log('close')
+  })
+})
+
+server.listen(port, () => {
   console.log(`Listening on port http://localhost:${port}`)
 })
