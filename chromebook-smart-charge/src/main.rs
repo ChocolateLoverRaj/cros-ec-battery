@@ -1,6 +1,7 @@
 use ectool::{
     battery::battery,
     charge_control::{self, ChargeControl, Sustainer},
+    charge_current_limit,
     hello::hello,
 };
 use futures::{self, executor::block_on};
@@ -33,6 +34,8 @@ async fn async_main() {
     // charge_control::set(ChargeControl::Normal(Some(Sustainer { min: 80, max: 80 })))
     //     .await
     //     .unwrap();
+
+    charge_current_limit::set(250).await.unwrap();
 }
 
 fn main() {

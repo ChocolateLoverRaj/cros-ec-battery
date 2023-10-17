@@ -1,11 +1,11 @@
 use async_process::Command;
-use std::{io, num::ParseIntError, string::FromUtf8Error};
+use std::{io, num::ParseIntError, str::FromStr, string::FromUtf8Error};
 
 #[derive(Debug)]
 pub enum Error {
     Utf8(FromUtf8Error),
     Io(io::Error),
-    ParseInt(ParseIntError),
+    ParseInt,
     Format,
 }
 
@@ -14,6 +14,7 @@ pub struct BatteryOutputFlags {
     pub ac_present: bool,
     pub batt_present: bool,
     pub charging: bool,
+    pub discharging: bool,
 }
 
 #[derive(Debug)]
@@ -32,7 +33,7 @@ pub struct BatteryOutput {
     /// (mV)
     pub present_voltage: u32,
     /// (mA)
-    pub present_current: u32,
+    pub present_current: i32,
     /// (mAh)
     pub remaining_capacity: u32,
     /// (mV)
@@ -52,17 +53,17 @@ pub async fn battery() -> Result<BatteryOutput, Error> {
                     String::from(&line[FIRST_COLUMN_SIZE..])
                 }
 
-                fn parse_number(line: &str) -> Result<u32, Error> {
+                fn parse_number<F: FromStr>(line: &str) -> Result<F, Error> {
                     let value_column = &get_value_column(line);
                     let number = value_column.split_once(" ");
                     let number = match number {
                         Some(number) => number.0,
                         None => value_column,
                     };
-                    let number = number.parse::<u32>();
+                    let number = number.parse::<F>();
                     match number {
                         Ok(number) => Ok(number),
-                        Err(e) => return Err(Error::ParseInt(e)),
+                        Err(e) => return Err(Error::ParseInt),
                     }
                 }
 
@@ -162,18 +163,29 @@ pub async fn battery() -> Result<BatteryOutput, Error> {
                     },
                     None => return Err(Error::Format),
                 }
-                let flags;
-                match output.next() {
+                let flags = match output.next() {
                     Some(line) => {
-                        let value = get_value_column(line);
-                        flags = BatteryOutputFlags {
-                            ac_present: value.contains("AC_PRESENT"),
-                            batt_present: value.contains("BATT_PRESENT"),
-                            charging: value.contains("CHARGING"),
+                        let value = &get_value_column(line)["0x06".len()..];
+                        let flags_iterator = value.split_whitespace();
+                        let mut flags = BatteryOutputFlags {
+                            ac_present: false,
+                            batt_present: false,
+                            charging: false,
+                            discharging: false,
+                        };
+                        for flag in flags_iterator {
+                            match flag {
+                                "AC_PRESENT" => flags.ac_present = true,
+                                "BATT_PRESENT" => flags.batt_present = true,
+                                "CHARGING" => flags.charging = true,
+                                "DISCHARGING" => flags.discharging = true,
+                                _ => {}
+                            }
                         }
+                        flags
                     }
                     None => return Err(Error::Format),
-                }
+                };
 
                 Ok(BatteryOutput {
                     oem_name,
