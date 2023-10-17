@@ -1,7 +1,9 @@
 {
   "$schema": "https://raw.githubusercontent.com/streetsidesoftware/cspell/main/cspell.schema.json",
   "words": [
+    "chargecontrol",
     "cros",
+    "ectool",
     "linuxstatic",
     "Paranjpe",
     "pmmmwh"
