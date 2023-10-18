@@ -1,5 +1,5 @@
 use async_process::Command;
-use std::{io, num::ParseIntError, str::FromStr, string::FromUtf8Error};
+use std::{io, str::FromStr, string::FromUtf8Error};
 
 #[derive(Debug)]
 pub enum Error {
@@ -63,7 +63,7 @@ pub async fn battery() -> Result<BatteryOutput, Error> {
                     let number = number.parse::<F>();
                     match number {
                         Ok(number) => Ok(number),
-                        Err(e) => return Err(Error::ParseInt),
+                        Err(_) => return Err(Error::ParseInt),
                     }
                 }
 
