@@ -39,15 +39,26 @@ async fn main() {
     let target_energy_mah =
         (config.target_energy as f64) / (100 as f64) * (battery_info.last_full_charge as f64);
     let difference_energy = target_energy_mah - (battery_info.remaining_capacity as f64);
-    let perfect_current = target_energy_mah / ((time_until_target as f64) / HOUR);
+    let perfect_current = difference_energy / ((time_until_target as f64) / HOUR);
 
-    let lowest_current_above = find_lowest_current_above(10).await;
+    let lowest_current_above = find_lowest_current_above(perfect_current as u32).await;
+    let actual_time_until_charged = difference_energy / (lowest_current_above as f64);
 
     println!(
-        "{:#?} {}  {target_energy_mah} {difference_energy} {perfect_current} {lowest_current_above}",
+        "\
+{:#?}
+time until target: {}
+target energy: {target_energy_mah}mAh
+difference energy: {difference_energy}mAh
+perfect current: {perfect_current}mA
+best possible current: {lowest_current_above}mA 
+actual time: {}",
         config,
         // time_until_target,
-        humantime::format_duration(Duration::from_millis(time_until_target))
+        humantime::format_duration(Duration::from_millis(time_until_target)),
+        humantime::format_duration(Duration::from_millis(
+            (actual_time_until_charged * HOUR) as u64
+        ))
     );
 
     // let result = hello().await.unwrap();
