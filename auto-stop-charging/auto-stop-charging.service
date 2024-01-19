@@ -1,0 +1,9 @@
+[Unit]
+Description=Stop charging when the battery reaches the threshold
+
+[Service]
+Type=exec
+ExecStart=/usr/local/bin/auto-stop-charging
+
+[Install]
+WantedBy=multi-user.target
