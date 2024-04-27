@@ -7,5 +7,7 @@ edition = "2021"
 
 [dependencies]
 battery = "0.7.8"
+chrono = "0.4.34"
 ectool = { version = "0.1.0", path = "../ectool" }
+sysctrlcmd = "1.0.2"
 tokio = { version = "1.35.1", features = ["full"] }
