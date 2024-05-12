@@ -11,9 +11,7 @@ async fn main() -> Result<(), battery::Error> {
     let mut battery = manager.batteries()?.next().unwrap()?;
     loop {
         // println!("{:#?}", battery);
-        if battery.energy_rate() > Power::new::<watt>(0.0)
-            && battery.energy() / battery.energy_full() > Ratio::new::<ratio>(THRESHOLD)
-        {
+        if battery.energy() / battery.energy_full() > Ratio::new::<ratio>(THRESHOLD) {
             match ectool::charge_control::set(ChargeControl::Idle).await {
                 Ok(_) => {
                     println!("Stopped charging");
