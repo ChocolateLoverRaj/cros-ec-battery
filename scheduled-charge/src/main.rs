@@ -14,6 +14,7 @@ use starship_battery::{
     Battery,
 };
 use tokio::{fs::File, time::sleep};
+use try_again::{retry_async, Delay, Retry, TokioSleep};
 use zbus::Connection;
 use zbus_systemd::login1::ManagerProxy;
 
@@ -65,17 +66,27 @@ async fn main() -> anyhow::Result<()> {
 
     let connection = Connection::system().await?;
     let manager = ManagerProxy::new(&connection).await?;
-    let get_fd = || async {
-        manager
-            .inhibit(
-                "sleep".into(),
-                "Charging Service".into(),
-                "Charge up to a certain energy".into(),
-                "delay".into(),
-            )
-            .await
+    let fd = {
+        // Sometimes it doesn't work if we attempt to get an inhibitor lock immediately after resume from suspend. So we retry after a short delay.
+        retry_async(
+            Retry {
+                max_tries: 100,
+                delay: Some(Delay::Static {
+                    delay: Duration::from_millis(500),
+                }),
+            },
+            TokioSleep {},
+            || {
+                manager.inhibit(
+                    "sleep".into(),
+                    "Charging Service".into(),
+                    "Charge up to a certain energy".into(),
+                    "delay".into(),
+                )
+            },
+        )
+        .await?
     };
-    let fd = get_fd().await?;
     let manager = starship_battery::Manager::new()?;
     let mut battery = manager
         .batteries()?

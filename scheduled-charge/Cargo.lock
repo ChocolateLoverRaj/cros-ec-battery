@@ -1293,6 +1293,7 @@ dependencies = [
  "futures-util",
  "starship-battery",
  "tokio",
+ "try-again",
  "zbus",
  "zbus_systemd",
 ]
@@ -1584,6 +1585,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c06d3da6113f116aaee68e4d601191614c9053067f9ab7f6edbcb161237daa54"
 dependencies = [
  "once_cell",
+]
+
+[[package]]
+name = "try-again"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1006cfd66eadaaa9ec7a3d011336e40b98cd6c4d8f7b1e331080f6145ac00671"
+dependencies = [
+ "tokio",
+ "tracing",
 ]
 
 [[package]]

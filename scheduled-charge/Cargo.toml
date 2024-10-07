@@ -13,4 +13,5 @@ zbus_systemd = { version = "0.25600.0", features = ["login1"] }
 crosec = { path = "./crosec-rs/crosec" }
 starship-battery = "0.10.0"
 clap = { version = "4.5.19", features = ["derive"] }
+try-again = "0.1.1"
 
